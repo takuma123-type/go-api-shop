@@ -1,17 +1,26 @@
 package main
 
 import (
+	"go-test/controllers"
+	"go-test/models"
+	"go-test/repositories"
+	"go-test/services"
+
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	router := gin.Default()
+	items := []models.Item{
+		{ID: 1, Name: "Laptop", Price: 1000, Description: "A laptop", SoldOut: false},
+		{ID: 2, Name: "Mouse", Price: 10, Description: "A mouse", SoldOut: false},
+		{ID: 3, Name: "Keyboard", Price: 20, Description: "A keyboard", SoldOut: false},
+	}
 
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Hello World!!!",
-		})
-	})
+	itemRepository := repositories.NewItemMemoryRepository(items)
+	itemService := services.NewItemService(itemRepository)
+	itemController := controllers.NewItemController(itemService)
 
-	router.Run(":8080")
+	r := gin.Default()
+	r.GET("/items", itemController.FindAll)
+	r.Run(":8080")
 }
