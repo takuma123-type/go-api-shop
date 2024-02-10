@@ -2,6 +2,7 @@ package main
 
 import (
 	"go-test/controllers"
+	"go-test/infra"
 	"go-test/models"
 	"go-test/repositories"
 	"go-test/services"
@@ -10,6 +11,7 @@ import (
 )
 
 func main() {
+	infra.Initialize()
 	items := []models.Item{
 		{ID: 1, Name: "Laptop", Price: 1000, Description: "A laptop", SoldOut: false},
 		{ID: 2, Name: "Mouse", Price: 10, Description: "A mouse", SoldOut: false},
