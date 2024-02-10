@@ -1,5 +1,20 @@
 version: "3.8"
 services:
+  app:
+    container_name: go-test
+    build:
+      context: .
+      dockerfile: ./infra/Dockerfile
+    tty: true
+    volumes:
+      - .:/go/src
+    env_file:
+      - ./.go_env
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+
   postgres:
     image: postgres:16-alpine
     container_name: postgres

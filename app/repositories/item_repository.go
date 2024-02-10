@@ -3,6 +3,8 @@ package repositories
 import (
 	"errors"
 	"go-test/models"
+
+	"gorm.io/gorm"
 )
 
 type IItemRepository interface {
@@ -58,4 +60,59 @@ func (r *ItemMemoryRepository) Delete(itemId uint) error {
 		}
 	}
 	return errors.New("Item not found")
+}
+
+type ItemDBRepository struct {
+	db *gorm.DB
+}
+
+// Create implements IItemRepository.
+func (r *ItemDBRepository) Create(newItem models.Item) (*models.Item, error) {
+	result := r.db.Create(&newItem)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &newItem, nil
+}
+
+// FindAll implements IItemRepository.
+func (r *ItemDBRepository) FindAll() (*[]models.Item, error) {
+	var items []models.Item
+	result := r.db.Find(&items)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &items, nil
+}
+
+// FindById implements IItemRepository.
+func (r *ItemDBRepository) FindById(itemId uint) (*models.Item, error) {
+	var item models.Item
+	result := r.db.First(&item, itemId)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &item, nil
+}
+
+// Update implements IItemRepository.
+func (r *ItemDBRepository) Update(updateItem models.Item) (*models.Item, error) {
+	result := r.db.Save(&updateItem)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &updateItem, nil
+}
+
+// Delete implements IItemRepository.
+func (r *ItemDBRepository) Delete(itemId uint) error {
+	result := r.db.Delete(&models.Item{}, itemId)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func NewItemRepository(db *gorm.DB) IItemRepository {
+	return &ItemDBRepository{db: db}
 }

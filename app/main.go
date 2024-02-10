@@ -3,8 +3,10 @@ package main
 import (
 	"go-test/controllers"
 	"go-test/infra"
-	"go-test/models"
 	"go-test/repositories"
+
+	// "go-test/models"
+
 	"go-test/services"
 
 	"github.com/gin-gonic/gin"
@@ -12,15 +14,18 @@ import (
 
 func main() {
 	infra.Initialize()
-	items := []models.Item{
-		{ID: 1, Name: "Laptop", Price: 1000, Description: "A laptop", SoldOut: false},
-		{ID: 2, Name: "Mouse", Price: 10, Description: "A mouse", SoldOut: false},
-		{ID: 3, Name: "Keyboard", Price: 20, Description: "A keyboard", SoldOut: false},
-		{ID: 4, Name: "Monitor", Price: 200, Description: "A monitor", SoldOut: false},
-		{ID: 5, Name: "Headset", Price: 50, Description: "A headset", SoldOut: false},
-	}
+	db := infra.SetupDB()
 
-	itemRepository := repositories.NewItemMemoryRepository(items)
+	// items := []models.Item{
+	// 	{ID: 1, Name: "Laptop", Price: 1000, Description: "A laptop", SoldOut: false},
+	// 	{ID: 2, Name: "Mouse", Price: 10, Description: "A mouse", SoldOut: false},
+	// 	{ID: 3, Name: "Keyboard", Price: 20, Description: "A keyboard", SoldOut: false},
+	// 	{ID: 4, Name: "Monitor", Price: 200, Description: "A monitor", SoldOut: false},
+	// 	{ID: 5, Name: "Headset", Price: 50, Description: "A headset", SoldOut: false},
+	// }
+
+	// itemRepository := repositories.NewItemMemoryRepository(items)
+	itemRepository := repositories.NewItemRepository(db)
 	itemService := services.NewItemService(itemRepository)
 	itemController := controllers.NewItemController(itemService)
 
